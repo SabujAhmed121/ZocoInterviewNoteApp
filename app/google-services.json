@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "789065165657",
+    "project_id": "zoconut-todo-app",
+    "storage_bucket": "zoconut-todo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789065165657:android:744a4f7a647da948453a48",
+        "android_client_info": {
+          "package_name": "com.example.zoconuttodoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789065165657-rnv45brlgfuida6trg2v8310k1t7ddhh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zoconuttodoapp",
+            "certificate_hash": "ea1a19f84941cf6386f857c8d232cbb37036562b"
+          }
+        },
+        {
+          "client_id": "789065165657-miaud82dmr8udfocf802trkbanr4r602.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsTQ7hfc0w7iv4N3G525mUUy4ul5ZJ2kw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789065165657-6qjel4qig6tnraasvfrhpps41i87sekf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
