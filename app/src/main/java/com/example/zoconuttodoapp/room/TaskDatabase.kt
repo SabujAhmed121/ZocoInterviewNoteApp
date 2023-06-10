@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 
-@Database(entities = [TaskEntity::class], version = 2)
+@Database(entities = [TaskEntity::class], version = 1)
 abstract class TaskDatabase: RoomDatabase() {
 
-    abstract fun taskDao(): TaskDao
+    abstract fun  taskDao(): TaskDao
 
     companion object {
         @Volatile

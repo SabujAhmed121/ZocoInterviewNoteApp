@@ -80,6 +80,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateUI(account: GoogleSignInAccount) {
+        Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()
+
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         mAuth.signInWithCredential(credential).addOnCompleteListener{
@@ -88,7 +90,7 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }else{
-                Toast.makeText(this, it.exception.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()
 
             }
         }

@@ -36,16 +36,12 @@ class TaskAdapter(private var items: ArrayList<TaskEntity>,
 
         val item = items[position]
         holder.taskText.text = item.task
-        holder.checkBox.isChecked= item.isActive
+        holder.checkBox.isChecked = item.isActive
 
 
-            holder.checkBox.setOnClickListener{
-
-                    checkedListener.invoke(item.id, item.task)
-
-            }
-
-
+        holder.checkBox.setOnClickListener{
+             checkedListener.invoke(item.id, item.task)
+         }
 
         holder.tvEdit.setOnClickListener {
             updateListener.invoke(item.id)
@@ -59,5 +55,11 @@ class TaskAdapter(private var items: ArrayList<TaskEntity>,
     override fun getItemCount(): Int {
         return items.size
     }
+//
+//    fun updateList(newList: List<TaskEntity>){
+//        items.clear()
+//        items.addAll(newList)
+//        notifyDataSetChanged()
+//    }
 
 }

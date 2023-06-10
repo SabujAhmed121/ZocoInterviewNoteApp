@@ -4,35 +4,32 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
+import androidx.activity.viewModels
 import com.example.zoconuttodoapp.Main.MainActivity
 import com.example.zoconuttodoapp.databinding.ActivityAdd2Binding
-import com.example.zoconuttodoapp.room.TaskApp
-import com.example.zoconuttodoapp.room.TaskDao
 import com.example.zoconuttodoapp.room.TaskEntity
-import kotlinx.coroutines.launch
+import com.example.zoconuttodoapp.viewmodelandrepository.TaskViewModel
 
 class AddActivity : AppCompatActivity() {
 
     private val binding by lazy {
         ActivityAdd2Binding.inflate(layoutInflater)
     }
+    val viewModel : TaskViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val taskDataDao = (application as TaskApp).db.taskDao()
-
-
         binding.button.setOnClickListener {
 
-            addRecord(taskDataDao)
+            addRecord()
 
         }
     }
 
-    private fun addRecord(taskDao: TaskDao){
+    private fun addRecord(){
 
 
         if (binding.taskText.text.toString().isEmpty()){
@@ -40,8 +37,9 @@ class AddActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG).show()
         }else{
 
-            lifecycleScope.launch {
-                taskDao.insert(TaskEntity(task = binding.taskText.text.toString()))
+
+                val data = TaskEntity(task = binding.taskText.text.toString())
+                viewModel.addTask(data)
                 Toast.makeText(applicationContext, "Record Saved",
                     Toast.LENGTH_LONG).show()
 
@@ -50,5 +48,5 @@ class AddActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-    }
+
 }
