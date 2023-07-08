@@ -27,6 +27,6 @@ interface TaskDao {
     fun fetchAllData(): LiveData<List<TaskEntity>>
 
     @Query("Select * from `user-task` where id=:id")
-    fun fetchDataById(id:Int): Flow<TaskEntity>
+    fun fetchDataById(id: Int): Flow<TaskEntity>
 
 }

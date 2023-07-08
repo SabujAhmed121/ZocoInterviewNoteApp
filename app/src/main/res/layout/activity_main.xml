@@ -6,92 +6,99 @@
     android:layout_height="match_parent"
     tools:context=".Main.MainActivity">
 
-
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="0dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="Tasks"
-        android:textColor="#1D1919"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_All"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/tv_All">
+
+        <TextView
+            android:id="@+id/tx_completed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:textColor="#696464"
+            android:textSize="16sp" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_All"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_All">
+
+        <TextView
+            android:id="@+id/tvNotCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:padding="6dp"
+            android:text="Not Done"
+            android:textAllCaps="false"
+            android:textColor="#696464"
+            android:textSize="16sp" />
+
+    </androidx.cardview.widget.CardView>
+
 
     <TextView
         android:id="@+id/tv_All"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:text="All"
-        android:textColor="@color/black"
-        android:padding="6dp"
-        android:textSize="13sp"
-        android:background="@drawable/text_background"
-        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:text="All Tasks"
+        android:textColor="#1D1919"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.452"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_Not_Selected"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Not Done"
-        android:layout_marginStart="20dp"
-        android:padding="6dp"
-        android:textSize="13sp"
-        android:background="@drawable/text_background"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_All"
-        app:layout_constraintStart_toEndOf="@+id/tv_All"
-        app:layout_constraintTop_toTopOf="@+id/tv_All" />
-
-    <TextView
-        android:id="@+id/tv_Selected"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:layout_marginStart="20dp"
-        android:textColor="@color/black"
-        android:padding="6dp"
-        android:textSize="13sp"
-        android:background="@drawable/text_background"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_Not_Selected"
-        app:layout_constraintStart_toEndOf="@+id/tv_Not_Selected"
-        app:layout_constraintTop_toTopOf="@+id/tv_Not_Selected" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItemsList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Selected"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_All"
+        app:layout_constraintVertical_bias="0.0"
+        tools:listitem="@layout/rv_recyclerview_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/float_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="#9EDBE2"
         android:clickable="true"
-        android:backgroundTint="@color/purple_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:tint="#ffffff" />
 
     <TextView
         android:id="@+id/tvNoRecordsAvailable"
@@ -107,6 +114,6 @@
         app:layout_constraintEnd_toEndOf="@+id/rvItemsList"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name"
+        app:layout_constraintTop_toBottomOf="@+id/tv_All"
         app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

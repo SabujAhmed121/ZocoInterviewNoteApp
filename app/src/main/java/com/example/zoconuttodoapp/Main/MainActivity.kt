@@ -1,30 +1,30 @@
 package com.example.zoconuttodoapp.Main
 
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.zoconuttodoapp.AddActivity
-import com.example.zoconuttodoapp.LoginActivity
 import com.example.zoconuttodoapp.R
 import com.example.zoconuttodoapp.databinding.ActivityMainBinding
 import com.example.zoconuttodoapp.databinding.DialogUpdateBinding
+import com.example.zoconuttodoapp.room.TaskDatabase
 import com.example.zoconuttodoapp.room.TaskEntity
+import com.example.zoconuttodoapp.viewmodelandrepository.Repo
 import com.example.zoconuttodoapp.viewmodelandrepository.TaskViewModel
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.NonCancellable.isActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -33,8 +33,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var mAuth: FirebaseAuth
-    private val viewModel : TaskViewModel by viewModels()
+    private val viewModel: TaskViewModel by viewModels()
     private lateinit var adapter: TaskAdapter
 
 
@@ -42,14 +41,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        mAuth = FirebaseAuth.getInstance()
+        attachSwipeAction()
 
-       viewModel.getAllNotes().observe(this@MainActivity, Observer {list->
 
-        list?.let { noteList ->
-            setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
-           }
-      })
+        viewModel.getAllNotes().observe(this@MainActivity, Observer { list ->
+
+            list?.let { noteList ->
+                setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
+            }
+        })
 
 
         binding.floatBtn.setOnClickListener {
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.tvAll.setOnClickListener {
-            viewModel.fetchAll().observe(this@MainActivity, Observer {list->
+            viewModel.fetchAll().observe(this@MainActivity, Observer { list ->
 
                 list?.let { noteList ->
                     setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
@@ -67,42 +67,35 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        binding.tvSelected.setOnClickListener {
+        binding.txCompleted.setOnClickListener {
 
-            viewModel.fetchAllCompleted().observe(this@MainActivity, Observer {list->
-
-                list?.let { noteList ->
-                    setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
-                }
-            })
-            }
-
-        binding.tvNotSelected.setOnClickListener {
-
-            viewModel.fetchNotCompleted().observe(this@MainActivity, Observer {list->
+            viewModel.fetchAllCompleted().observe(this@MainActivity, Observer { list ->
 
                 list?.let { noteList ->
                     setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
                 }
             })
         }
-}
+
+        binding.tvNotCompleted.setOnClickListener {
+
+            viewModel.fetchNotCompleted().observe(this@MainActivity, Observer { list ->
+
+                list?.let { noteList ->
+                    setUpListOfDataIntoRecyclerView(noteList as ArrayList<TaskEntity>)
+                }
+            })
+        }
+    }
 
 
-//setting our mainActivity recyclerview
-    private fun setUpListOfDataIntoRecyclerView(taskList:ArrayList<TaskEntity>){
+    //setting our mainActivity recyclerview
+    private fun setUpListOfDataIntoRecyclerView(taskList: ArrayList<TaskEntity>) {
 
-        if(taskList.isNotEmpty()){
-           adapter = TaskAdapter(taskList,
-                { updateId ->
-                    updateRecordDialog(updateId)
-                },
-                {deleteId->
-                    deleteRecordDialog(deleteId)
-                },
-                { it, task1->
-                    updateChecked(it, task1)
-                },
+        if (taskList.isNotEmpty()) {
+            adapter = TaskAdapter(
+                taskList,
+                Repo(TaskDatabase.getInstance(application).taskDao()),
                 this
             )
             binding.rvItemsList.layoutManager = LinearLayoutManager(this)
@@ -110,15 +103,50 @@ class MainActivity : AppCompatActivity() {
             binding.rvItemsList.visibility = View.VISIBLE
             binding.tvNoRecordsAvailable.visibility = View.INVISIBLE
 
-        }else{
+        } else {
             binding.rvItemsList.visibility = View.INVISIBLE
             binding.tvNoRecordsAvailable.visibility = View.VISIBLE
 
         }
     }
 
+    private fun attachSwipeAction() {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val task = adapter.getTask(position)
+
+                when (direction) {
+                    ItemTouchHelper.RIGHT -> {
+
+                        viewModel.deleteTask(task)
+                    }
+
+                    ItemTouchHelper.LEFT -> {
+                        val id = task.id
+                        updateRecordDialog(id)
+                    }
+                }
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(binding.rvItemsList)
+    }
+
     //update record
-    private fun updateRecordDialog(id: Int){
+    private fun updateRecordDialog(id: Int) {
         val updateDialog = Dialog(this, R.style.Theme_Dialog)
         updateDialog.setCancelable(false)
         val binding = DialogUpdateBinding.inflate(layoutInflater)
@@ -128,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.getTaskById(id).collect {
 
-                if(it != null){
+                if (it != null) {
                     binding.etUpdateTask.setText(it.task)
                 }
             }
@@ -137,75 +165,59 @@ class MainActivity : AppCompatActivity() {
         binding.tvUpdate.setOnClickListener {
             val task = binding.etUpdateTask.text.toString()
 
-            if (task.isNotEmpty()){
-                    viewModel.updateTask(TaskEntity(id, task))
-                    Toast.makeText(applicationContext,
-                        "Record updated", Toast.LENGTH_LONG).show()
-                    updateDialog.dismiss()
-            }else{
-                Toast.makeText(applicationContext,
-                    "Name and update are Invalid", Toast.LENGTH_LONG).show()
+            if (task.isNotEmpty()) {
+                viewModel.updateTask(TaskEntity(id, task))
+                Toast.makeText(
+                    applicationContext,
+                    "Record updated", Toast.LENGTH_LONG
+                ).show()
+                updateDialog.dismiss()
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Name and update are Invalid", Toast.LENGTH_LONG
+                ).show()
             }
         }
 
-        binding.tvCancel.setOnClickListener{
+        binding.tvCancel.setOnClickListener {
             updateDialog.dismiss()
         }
         updateDialog.show()
     }
 
-    private fun updateChecked(id: Int, task1: String){
-
-        lifecycleScope.launch {
-
-            viewModel.updateTask(TaskEntity(id, task = task1, isActive = isActive))
-            Toast.makeText(
-                applicationContext,
-                "Done", Toast.LENGTH_LONG
-            ).show()
-
-        }
-
-    }
 
     //Delete record
-    private fun deleteRecordDialog(id: Int){
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            .setTitle("Delete")
-            .setMessage("Are you sure ?")
-            .setPositiveButton("Yes"){dialogInterface, which->
-                    viewModel.deleteTask(TaskEntity(id))
-                    Toast.makeText(applicationContext,
-                        "Deleted", Toast.LENGTH_LONG).show()
-                dialogInterface.dismiss()
-            }
-            .setNegativeButton("No"){dialogInterface, which->
-                Toast.makeText(applicationContext,
-                    "Not Deleted", Toast.LENGTH_LONG).show()
-                dialogInterface.dismiss()
-            }
-        val alertDialog = builder.create()
-        alertDialog.setCancelable(false)
-        alertDialog.show()
-    }
-    // Menu Setting
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
-        MenuInflater(this).inflate(R.menu.menu_for_main, menu)
-        return true
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.refresh -> recreate()
-            R.id.logOut -> {
-
-                mAuth.signOut()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
+//    private fun deleteRecordDialog(id: Int){
+//        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+//            .setTitle("Delete")
+//            .setMessage("Are you sure ?")
+//            .setPositiveButton("Yes"){dialogInterface, which->
+//                    viewModel.deleteTask(TaskEntity(id))
+//                    Toast.makeText(applicationContext,
+//                        "Deleted", Toast.LENGTH_LONG).show()
+//                dialogInterface.dismiss()
+//            }
+//            .setNegativeButton("No"){dialogInterface, which->
+//                Toast.makeText(applicationContext,
+//                    "Not Deleted", Toast.LENGTH_LONG).show()
+//                dialogInterface.dismiss()
+//            }
+//        val alertDialog = builder.create()
+//        alertDialog.setCancelable(false)
+//        alertDialog.show()
+//    }
+//    // Menu Setting
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//
+//        MenuInflater(this).inflate(R.menu.menu_for_main, menu)
+//        return true
+//    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when(item.itemId){
+//            R.id.refresh -> recreate()
+//        }
+//        return super.onOptionsItemSelected(item)
+//    }
 
 }

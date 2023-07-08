@@ -15,7 +15,7 @@ class AddActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityAdd2Binding.inflate(layoutInflater)
     }
-    val viewModel : TaskViewModel by viewModels()
+    val viewModel: TaskViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,24 +29,28 @@ class AddActivity : AppCompatActivity() {
         }
     }
 
-    private fun addRecord(){
+    private fun addRecord() {
 
 
-        if (binding.taskText.text.toString().isEmpty()){
-            Toast.makeText(applicationContext, "Task cannot be blank",
-                Toast.LENGTH_LONG).show()
-        }else{
+        if (binding.taskText.text.toString().isEmpty()) {
+            Toast.makeText(
+                applicationContext, "Task cannot be blank",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
 
 
-                val data = TaskEntity(task = binding.taskText.text.toString())
-                viewModel.addTask(data)
-                Toast.makeText(applicationContext, "Record Saved",
-                    Toast.LENGTH_LONG).show()
+            val data = TaskEntity(task = binding.taskText.text.toString())
+            viewModel.addTask(data)
+            Toast.makeText(
+                applicationContext, "Record Saved",
+                Toast.LENGTH_LONG
+            ).show()
 
-            }
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
         }
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 
 }

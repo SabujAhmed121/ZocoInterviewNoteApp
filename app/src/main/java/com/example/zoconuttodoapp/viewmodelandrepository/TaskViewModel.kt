@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
 
-    val repository : Repo
+    val repository: Repo
 
     init {
         val dao = TaskDatabase.getInstance(application).taskDao()
@@ -23,7 +23,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getAllTask()
     }
 
-    fun getTaskById(id : Int): Flow<TaskEntity> {
+    fun getTaskById(id: Int): Flow<TaskEntity> {
         return repository.getTaskById(id)
     }
 
@@ -43,11 +43,12 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(taskEntity)
     }
 
-    fun deleteTask(taskEntity : TaskEntity) = viewModelScope.launch(Dispatchers.IO) {
+    fun deleteTask(taskEntity: TaskEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.delete(taskEntity)
     }
 
     fun updateTask(taskEntity: TaskEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.update(taskEntity)
     }
+
 }
